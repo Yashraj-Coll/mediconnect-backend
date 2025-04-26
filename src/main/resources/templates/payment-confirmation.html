@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #777;
+            font-size: 0.8em;
+        }
+        .details {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .details-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+        .details-label {
+            font-weight: bold;
+            color: #555;
+        }
+        .success-message {
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Payment Confirmation</h1>
+    </div>
+    <div class="content">
+        <p>Dear <span th:text="${patientName}">Patient</span>,</p>
+        
+        <p>Your payment has been successfully processed for your appointment with <span th:text="${doctorName}">Doctor</span>.</p>
+        
+        <p class="success-message">Thank you for your payment!</p>
+        
+        <div class="details">
+            <h3>Payment Details:</h3>
+            <div class="details-row">
+                <span class="details-label">Transaction ID:</span>
+                <span th:text="${transactionId}">TXN_12345</span>
+            </div>
+            <div class="details-row">
+                <span class="details-label">Order ID:</span>
+                <span th:text="${orderId}">ORDER_12345</span>
+            </div>
+            <div class="details-row">
+                <span class="details-label">Amount:</span>
+                <span th:text="${amount + ' ' + currency}">1000 INR</span>
+            </div>
+            <div class="details-row">
+                <span class="details-label">Payment Method:</span>
+                <span th:text="${paymentMethod}">Card</span>
+            </div>
+            <div class="details-row">
+                <span class="details-label">Payment Date:</span>
+                <span th:text="${paymentDate}">2023-04-21 14:30:00</span>
+            </div>
+        </div>
+        
+        <div class="details">
+            <h3>Appointment Details:</h3>
+            <div class="details-row">
+                <span class="details-label">Doctor:</span>
+                <span th:text="${doctorName}">Dr. John Doe</span>
+            </div>
+            <div class="details-row">
+                <span class="details-label">Date:</span>
+                <span th:text="${appointmentDate}">2023-04-22</span>
+            </div>
+            <div class="details-row">
+                <span class="details-label">Time:</span>
+                <span th:text="${appointmentTime}">10:30 AM</span>
+            </div>
+        </div>
+        
+        <p>You will receive a separate email with the details of your appointment. Please arrive at least 15 minutes before your scheduled appointment.</p>
+        
+        <p>If you have any questions or need to cancel/reschedule your appointment, please contact us at support@mediconnect.com or call us at +91-1234567890.</p>
+        
+        <p>Best regards,<br/>MediConnect Team</p>
+    </div>
+    <div class="footer">
+        <p>© 2025 MediConnect. All rights reserved.</p>
+        <p>This is an automated email. Please do not reply to this message.</p>
+    </div>
+</body>
+</html>

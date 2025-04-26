@@ -1,0 +1,42 @@
+{
+  "groups": [
+    {
+      "name": "jwt",
+      "type": "com.mediconnect.config.JwtProperties",
+      "sourceType": "com.mediconnect.config.JwtProperties"
+    },
+    {
+      "name": "mediconnect.ai.model",
+      "type": "com.mediconnect.config.AiModelProperties",
+      "sourceType": "com.mediconnect.config.AiModelProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "jwt.expiration",
+      "type": "java.lang.Long",
+      "sourceType": "com.mediconnect.config.JwtProperties"
+    },
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "sourceType": "com.mediconnect.config.JwtProperties"
+    },
+    {
+      "name": "mediconnect.ai.model.api-key",
+      "type": "java.lang.String",
+      "sourceType": "com.mediconnect.config.AiModelProperties"
+    },
+    {
+      "name": "mediconnect.ai.model.url",
+      "type": "java.lang.String",
+      "sourceType": "com.mediconnect.config.AiModelProperties"
+    },
+    {
+      "name": "mediconnect.ai.model.version",
+      "type": "java.lang.String",
+      "sourceType": "com.mediconnect.config.AiModelProperties"
+    }
+  ],
+  "hints": []
+}

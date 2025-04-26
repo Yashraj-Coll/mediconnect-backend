@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Prescription</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .title { font-size: 24px; font-weight: bold; }
+        .section { margin-top: 20px; }
+        .section-title { font-size: 16px; font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .footer { margin-top: 50px; border-top: 1px solid #ccc; padding-top: 10px; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">PRESCRIPTION</div>
+        <p>MediConnect Health Services</p>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">GENERAL INFORMATION</div>
+        <table>
+            <tr>
+                <th>Prescription ID:</th>
+                <td th:text="${prescriptionId}">123</td>
+                <th>Date:</th>
+                <td th:text="${prescriptionDate}">2023-01-01</td>
+            </tr>
+            <tr>
+                <th>Patient:</th>
+                <td th:text="${patientName}">John Doe</td>
+                <th>Doctor:</th>
+                <td th:text="${doctorName}">Dr. Jane Smith</td>
+            </tr>
+            <tr>
+                <th>Valid Until:</th>
+                <td th:text="${validUntil}">2023-02-01</td>
+                <th>Refillable:</th>
+                <td th:text="${isRefillable ? 'Yes (' + refillCount + ' refills remaining)' : 'No'}">Yes (2 refills remaining)</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="section">
+        <div class="section-title">MEDICATIONS</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Medication</th>
+                    <th>Dosage</th>
+                    <th>Frequency</th>
+                    <th>Duration</th>
+                    <th>Route</th>
+                    <th>Take</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="medication : ${medications}">
+                    <td th:text="${medication.medicationName}">Medication Name</td>
+                    <td th:text="${medication.dosage}">10mg</td>
+                    <td th:text="${medication.frequency}">3 times daily</td>
+                    <td th:text="${medication.duration}">7 days</td>
+                    <td th:text="${medication.route}">Oral</td>
+                    <td th:text="${medication.beforeMeal ? 'Before meal' : 'After meal'}">After meal</td>
+                    <td th:text="${medication.quantity}">21 tablets</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="section" th:if="${specialInstructions != null && !specialInstructions.isEmpty()}">
+        <div class="section-title">SPECIAL INSTRUCTIONS</div>
+        <p th:text="${specialInstructions}">Take with plenty of water. Avoid alcohol.</p>
+    </div>
+    
+    <div class="footer">
+        <p th:if="${isDigitallySigned}">This prescription has been digitally signed.</p>
+        <p>Generated on <span th:text="${generatedDate}">2023-01-01 12:30</span></p>
+        <p>This is an official medical document from MediConnect Health Services.</p>
+    </div>
+</body>
+</html>

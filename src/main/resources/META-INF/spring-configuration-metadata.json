@@ -1,0 +1,174 @@
+{
+  "properties": [
+    {
+      "name": "blockchain.contract-address",
+      "type": "java.lang.String",
+      "description": "Smart contract address used by the blockchain module"
+    },
+    {
+      "name": "blockchain.gas-limit",
+      "type": "java.lang.Long",
+      "description": "Gas limit for blockchain transactions"
+    },
+    {
+      "name": "blockchain.gas-price",
+      "type": "java.lang.Long",
+      "description": "Gas price for blockchain transactions"
+    },
+    {
+      "name": "blockchain.node-url",
+      "type": "java.lang.String",
+      "description": "Blockchain node endpoint URL"
+    },
+    {
+      "name": "blockchain.private-key",
+      "type": "java.lang.String",
+      "description": "Private key for signing blockchain transactions"
+    },
+    {
+      "name": "file.upload-dir",
+      "type": "java.lang.String",
+      "description": "Directory path for storing uploaded files"
+    },
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "description": "Secret key used for signing JWT tokens"
+    },
+    {
+      "name": "jwt.expiration",
+      "type": "java.lang.Long",
+      "description": "JWT expiration time in milliseconds"
+    },
+    {
+      "name": "mediconnect.ai.health-predictor.api-url",
+      "type": "java.lang.String",
+      "description": "API URL for AI health predictor"
+    },
+    {
+      "name": "mediconnect.ai.health-predictor.api-key",
+      "type": "java.lang.String",
+      "description": "API key for AI health predictor"
+    },
+    {
+      "name": "mediconnect.ai.image-analysis.api-url",
+      "type": "java.lang.String",
+      "description": "API URL for image analysis module"
+    },
+    {
+      "name": "mediconnect.ai.image-analysis.api-key",
+      "type": "java.lang.String",
+      "description": "API key for image analysis module"
+    },
+    {
+      "name": "mediconnect.ai.medication.api-url",
+      "type": "java.lang.String",
+      "description": "API URL for medication interaction module"
+    },
+    {
+      "name": "mediconnect.ai.medication.api-key",
+      "type": "java.lang.String",
+      "description": "API key for medication interaction module"
+    },
+    {
+      "name": "mediconnect.ai.treatment.api-url",
+      "type": "java.lang.String",
+      "description": "API URL for treatment recommendation"
+    },
+    {
+      "name": "mediconnect.ai.treatment.api-key",
+      "type": "java.lang.String",
+      "description": "API key for treatment recommendation"
+    },
+    {
+      "name": "mediconnect.ai.triage.api-url",
+      "type": "java.lang.String",
+      "description": "API URL for AI triage system"
+    },
+    {
+      "name": "mediconnect.ai.triage.api-key",
+      "type": "java.lang.String",
+      "description": "API key for AI triage system"
+    },
+    {
+      "name": "mediconnect.ai.model.url",
+      "type": "java.lang.String",
+      "description": "Base URL of the MediConnect AI model"
+    },
+    {
+      "name": "mediconnect.ai.model.api-key",
+      "type": "java.lang.String",
+      "description": "API key to access the MediConnect AI model"
+    },
+    {
+      "name": "mediconnect.ai.model.version",
+      "type": "java.lang.String",
+      "description": "AI model version for MediConnect"
+    },
+    {
+      "name": "mediconnect.chatbot.api-url",
+      "type": "java.lang.String",
+      "description": "API URL for AI chatbot"
+    },
+    {
+      "name": "mediconnect.chatbot.api-key",
+      "type": "java.lang.String",
+      "description": "API key for AI chatbot"
+    },
+    {
+      "name": "mediconnect.chatbot.model",
+      "type": "java.lang.String",
+      "description": "Model used by AI chatbot (e.g., GPT-3.5)"
+    },
+    {
+      "name": "mediconnect.genomic.api-url",
+      "type": "java.lang.String",
+      "description": "API URL for genomic data analysis"
+    },
+    {
+      "name": "mediconnect.genomic.api-key",
+      "type": "java.lang.String",
+      "description": "API key for genomic data analysis"
+    },
+    {
+      "name": "mediconnect.medical-coding.api-url",
+      "type": "java.lang.String",
+      "description": "API URL for medical coding service"
+    },
+    {
+      "name": "mediconnect.medical-coding.api-key",
+      "type": "java.lang.String",
+      "description": "API key for medical coding service"
+    },
+    {
+      "name": "mediconnect.speech-to-text.api-url",
+      "type": "java.lang.String",
+      "description": "API URL for speech-to-text service"
+    },
+    {
+      "name": "mediconnect.speech-to-text.api-key",
+      "type": "java.lang.String",
+      "description": "API key for speech-to-text service"
+    },
+    {
+      "name": "mediconnect.translation.api-url",
+      "type": "java.lang.String",
+      "description": "API URL for language translation service"
+    },
+    {
+      "name": "mediconnect.translation.api-key",
+      "type": "java.lang.String",
+      "description": "API key for language translation service"
+    },
+    {
+      "name": "stripe.api.key",
+      "type": "java.lang.String",
+      "description": "Stripe secret API key"
+    },
+    {
+      "name": "stripe.webhook.secret",
+      "type": "java.lang.String",
+      "description": "Stripe webhook signing secret"
+    }
+  ]
+}
