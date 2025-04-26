@@ -10,4 +10,4 @@ WORKDIR /app
 COPY --from=build /app/target/MediConnect.war app.war
 EXPOSE 8080
 ENV SPRING_PROFILES_ACTIVE=prod
-ENTRYPOINT ["java", "-jar", "app.war"]
+ENTRYPOINT ["java", "-jar", "app.war']
