@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mediconnect.dto.DoctorDTO;
+import com.mediconnect.dto.DoctorLanguageDTO;
 import com.mediconnect.model.Doctor;
 import com.mediconnect.service.DoctorService;
 
@@ -33,6 +34,7 @@ public class DoctorController {
      * Get all doctors
      */
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Doctor>> getAllDoctors() {
         List<Doctor> doctors = doctorService.getAllDoctors();
         return new ResponseEntity<>(doctors, HttpStatus.OK);
@@ -101,6 +103,35 @@ public class DoctorController {
         List<Doctor> doctors = doctorService.getTopRatedDoctors();
         return new ResponseEntity<>(doctors, HttpStatus.OK);
     }
+    
+    /**
+     * Get languages for a doctor
+     */
+    @GetMapping("/{id}/languages")
+    public ResponseEntity<List<DoctorLanguageDTO>> getDoctorLanguages(@PathVariable Long id) {
+        List<DoctorLanguageDTO> languages = doctorService.getDoctorLanguages(id);
+        return new ResponseEntity<>(languages, HttpStatus.OK);
+    }
+    
+    /**
+     * Add language to a doctor
+     */
+    @PostMapping("/{id}/languages")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
+    public ResponseEntity<DoctorLanguageDTO> addDoctorLanguage(@PathVariable Long id, @RequestBody DoctorLanguageDTO languageDTO) {
+        DoctorLanguageDTO addedLanguage = doctorService.addDoctorLanguage(id, languageDTO.getLanguage());
+        return new ResponseEntity<>(addedLanguage, HttpStatus.CREATED);
+    }
+    
+    /**
+     * Remove language from a doctor
+     */
+    @DeleteMapping("/{id}/languages/{language}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
+    public ResponseEntity<Void> removeDoctorLanguage(@PathVariable Long id, @PathVariable String language) {
+        doctorService.removeDoctorLanguage(id, language);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
     /**
      * Create a new doctor
@@ -133,7 +164,7 @@ public class DoctorController {
     }
     
     /**
-     * Public endpoints for doctor listings
+     * Public endpoints for doctor listings - No authentication required
      */
     @GetMapping("/public/all")
     public ResponseEntity<List<Doctor>> getPublicDoctorsList() {
@@ -145,5 +176,32 @@ public class DoctorController {
     public ResponseEntity<List<Doctor>> getPublicDoctorsBySpecialization(@PathVariable String specialization) {
         List<Doctor> doctors = doctorService.getDoctorsBySpecialization(specialization);
         return new ResponseEntity<>(doctors, HttpStatus.OK);
+    }
+    
+    @GetMapping("/public/top-rated")
+    public ResponseEntity<List<Doctor>> getPublicTopRatedDoctors() {
+        List<Doctor> doctors = doctorService.getTopRatedDoctors();
+        return new ResponseEntity<>(doctors, HttpStatus.OK);
+    }
+    
+    @GetMapping("/public/search")
+    public ResponseEntity<List<Doctor>> searchPublicDoctors(@RequestParam String keyword) {
+        List<Doctor> doctors = doctorService.searchDoctors(keyword);
+        return new ResponseEntity<>(doctors, HttpStatus.OK);
+    }
+    
+    @GetMapping("/public/{id}")
+    public ResponseEntity<Doctor> getPublicDoctorById(@PathVariable Long id) {
+        Doctor doctor = doctorService.getDoctorById(id);
+        return new ResponseEntity<>(doctor, HttpStatus.OK);
+    }
+    
+    /**
+     * Public endpoint for doctor languages - No authentication required
+     */
+    @GetMapping("/public/{id}/languages")
+    public ResponseEntity<List<DoctorLanguageDTO>> getPublicDoctorLanguages(@PathVariable Long id) {
+        List<DoctorLanguageDTO> languages = doctorService.getDoctorLanguages(id);
+        return new ResponseEntity<>(languages, HttpStatus.OK);
     }
 }

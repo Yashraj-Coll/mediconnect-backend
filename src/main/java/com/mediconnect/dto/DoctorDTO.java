@@ -1,5 +1,7 @@
 package com.mediconnect.dto;
 
+import java.util.List;
+
 public class DoctorDTO {
     
     private Long id;
@@ -14,6 +16,8 @@ public class DoctorDTO {
     private String biography;
     private Integer averageRating;
     private boolean isAvailableForEmergency;
+    private List<String> languages; // Added field for languages
+    private String profileImage; // Added field for profile image URL
     
     // Getters and Setters
     public Long getId() {
@@ -110,5 +114,21 @@ public class DoctorDTO {
     
     public void setAvailableForEmergency(boolean isAvailableForEmergency) {
         this.isAvailableForEmergency = isAvailableForEmergency;
+    }
+    
+    public List<String> getLanguages() {
+        return languages;
+    }
+    
+    public void setLanguages(List<String> languages) {
+        this.languages = languages;
+    }
+    
+    public String getProfileImage() {
+        return profileImage;
+    }
+    
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }
