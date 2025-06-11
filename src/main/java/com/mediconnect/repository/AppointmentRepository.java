@@ -1,6 +1,6 @@
 package com.mediconnect.repository;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 import com.mediconnect.model.Appointment;
 import com.mediconnect.model.Appointment.AppointmentStatus;
 import com.mediconnect.model.Appointment.AppointmentType;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
@@ -29,15 +31,15 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
            "a.appointmentDateTime BETWEEN :startDate AND :endDate")
     List<Appointment> findByDoctorIdAndDateRange(
             @Param("doctorId") Long doctorId, 
-            @Param("startDate") LocalDateTime startDate, 
-            @Param("endDate") LocalDateTime endDate);
+            @Param("startDate") OffsetDateTime startDate, 
+            @Param("endDate") OffsetDateTime endDate);
     
     @Query("SELECT a FROM Appointment a WHERE a.patient.id = :patientId AND " +
            "a.appointmentDateTime BETWEEN :startDate AND :endDate")
     List<Appointment> findByPatientIdAndDateRange(
             @Param("patientId") Long patientId, 
-            @Param("startDate") LocalDateTime startDate, 
-            @Param("endDate") LocalDateTime endDate);
+            @Param("startDate") OffsetDateTime startDate, 
+            @Param("endDate") OffsetDateTime endDate);
     
     List<Appointment> findByAppointmentType(AppointmentType appointmentType);
     
@@ -45,7 +47,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
            "a.appointmentDateTime > :currentTime ORDER BY a.appointmentDateTime")
     List<Appointment> findUpcomingAppointmentsByStatus(
             @Param("status") AppointmentStatus status, 
-            @Param("currentTime") LocalDateTime currentTime);
+            @Param("currentTime") OffsetDateTime currentTime);
     
     @Query("SELECT a FROM Appointment a WHERE a.isPaid = false")
     List<Appointment> findUnpaidAppointments();
@@ -53,7 +55,30 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     /**
      * Find appointments between two dates
      */
-    List<Appointment> findByAppointmentDateTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
+    List<Appointment> findByAppointmentDateTimeBetween(OffsetDateTime startDate, OffsetDateTime endDate);
+    
+    /**
+     * NEW: Find appointments by status
+     */
+    List<Appointment> findByStatus(AppointmentStatus status);
+    
+    /**
+     * NEW: Find today's appointments
+     */
+    @Query("SELECT a FROM Appointment a WHERE DATE(a.appointmentDateTime) = CURRENT_DATE")
+    List<Appointment> findTodaysAppointments();
+    
+    /**
+     * NEW: Find appointments coming up in the next X hours for reminders
+     */
+    @Query("SELECT a FROM Appointment a WHERE a.appointmentDateTime BETWEEN CURRENT_TIMESTAMP AND :futureTime AND a.status = 'upcoming'")
+    List<Appointment> findUpcomingAppointmentsInNextHours(@Param("futureTime") OffsetDateTime futureTime);
+    
+    /**
+     * NEW: Find unpaid appointments that are coming up (for payment reminders)
+     */
+    @Query("SELECT a FROM Appointment a WHERE a.isPaid = false AND a.appointmentDateTime > CURRENT_TIMESTAMP AND a.appointmentDateTime < :tomorrow")
+    List<Appointment> findUnpaidUpcomingAppointments(@Param("tomorrow") OffsetDateTime tomorrow);
     
     /**
      * Advanced appointment search with multiple criteria
@@ -79,8 +104,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             @Param("status") AppointmentStatus status,
             @Param("type") AppointmentType type,
             @Param("isPaid") Boolean isPaid,
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate,
+            @Param("startDate") OffsetDateTime startDate,
+            @Param("endDate") OffsetDateTime endDate,
             @Param("doctorName") String doctorName,
             @Param("patientName") String patientName,
             @Param("specialization") String specialization,
@@ -99,8 +124,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
            "DATEADD(MINUTE, a.durationMinutes, a.appointmentDateTime) >= :endTime))")
     List<Appointment> findOverlappingAppointments(
             @Param("doctorId") Long doctorId,
-            @Param("startTime") LocalDateTime startTime,
-            @Param("endTime") LocalDateTime endTime);
+            @Param("startTime") OffsetDateTime startTime,
+            @Param("endTime") OffsetDateTime endTime);
     
     /**
      * Find appointments with specific duration
@@ -119,7 +144,14 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
            "WHERE d.specialization = :specialty " +
            "AND d.id NOT IN (SELECT a.doctor.id FROM Appointment a WHERE a.appointmentDateTime BETWEEN :startTime AND :endTime)")
     List<Object[]> findAvailableDoctors(
-            @Param("startTime") LocalDateTime startTime,
-            @Param("endTime") LocalDateTime endTime,
+            @Param("startTime") OffsetDateTime startTime,
+            @Param("endTime") OffsetDateTime endTime,
             @Param("specialty") String specialty);
+    
+    
+ // Add this method to your AppointmentRepository interface
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Appointment a WHERE a.patient.id = :patientId")
+    void deleteByPatientId(@Param("patientId") Long patientId);
 }

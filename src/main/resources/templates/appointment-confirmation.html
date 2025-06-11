@@ -1,44 +1,304 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Appointment Confirmation</title>
+    <title>Appointment Confirmation - MediConnect</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; }
-        .container { width: 600px; margin: 0 auto; }
-        .header { background-color: #4a90e2; color: white; padding: 20px; text-align: center; }
-        .content { padding: 20px; border: 1px solid #ddd; }
-        .footer { padding: 20px; text-align: center; font-size: 12px; color: #888; }
-        .details { background-color: #f9f9f9; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        body { 
+            font-family: Arial, sans-serif; 
+            line-height: 1.6; 
+            margin: 0; 
+            padding: 0; 
+            background-color: #f5f5f5; 
+        }
+        .container { 
+            width: 600px; 
+            margin: 0 auto; 
+            background-color: white; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+        }
+        .header { 
+            background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%); 
+            color: white; 
+            padding: 30px 20px; 
+            text-align: center; 
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        .logo-icon {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            height: 50px;
+            width: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        .logo-text {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .logo-health {
+            color: #FFA500;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        .content { 
+            padding: 30px; 
+        }
+        .success-banner {
+            background-color: #E8F5E8;
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+        }
+        .success-banner h2 {
+            color: #4CAF50;
+            margin: 0 0 10px 0;
+        }
+        .details { 
+            background-color: #f9f9f9; 
+            padding: 25px; 
+            margin: 20px 0; 
+            border-radius: 8px; 
+            border-left: 4px solid #7C3AED;
+        }
+        .details h3 {
+            color: #7C3AED;
+            margin-top: 0;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 12px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #555;
+        }
+        .detail-value {
+            color: #333;
+        }
+        .video-section {
+            background: linear-gradient(135deg, #E8F4FD 0%, #F0E8FF 100%);
+            padding: 25px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            border: 2px solid #7C3AED;
+        }
+        .jitsi-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        .jitsi-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(124, 58, 237, 0.4);
+        }
+        .jitsi-instructions {
+            background-color: #FFF9E6;
+            border: 1px solid #FFE066;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: left;
+        }
+        .jitsi-instructions h4 {
+            color: #B45309;
+            margin-top: 0;
+        }
+        .jitsi-instructions ul {
+            color: #92400E;
+            padding-left: 20px;
+        }
+        .footer { 
+            padding: 20px; 
+            text-align: center; 
+            font-size: 12px; 
+            color: #888; 
+            background-color: #f8f8f8;
+        }
+        .important-note {
+            background-color: #FFF3CD;
+            border: 1px solid #FFEAA7;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .platform-badge {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Appointment Confirmation</h1>
+            <div class="logo">
+                <div class="logo-icon">M<span style="color: #FFA500;">+</span></div>
+                <div>
+                    <span class="logo-text">MediConnect</span>
+                    <span class="logo-health">HEALTH</span>
+                </div>
+            </div>
+            <h1 style="margin: 0;">Appointment Confirmed!</h1>
         </div>
+        
         <div class="content">
-            <p>Dear <span th:text="${patientName}">Patient</span>,</p>
-            
-            <p>Your appointment with <span th:text="${doctorName}">Doctor</span> (<span th:text="${specialization}">Specialization</span>) has been confirmed.</p>
-            
-            <div class="details">
-                <h3>Appointment Details:</h3>
-                <p><strong>Date:</strong> <span th:text="${appointmentDate}">Date</span></p>
-                <p><strong>Time:</strong> <span th:text="${appointmentTime}">Time</span></p>
-                <p><strong>Type:</strong> <span th:text="${appointmentType}">Type</span></p>
-                <p><strong>Duration:</strong> <span th:text="${appointmentDuration}">Duration</span></p>
-                <p><strong>Notes:</strong> <span th:text="${appointmentNotes}">Notes</span></p>
+            <div class="success-banner">
+                <h2>✅ Your appointment has been successfully confirmed</h2>
+                <p>We're looking forward to providing you with excellent healthcare service.</p>
             </div>
             
-            <p>Please arrive 10 minutes before your appointment time. If you need to reschedule or cancel, please do so at least 24 hours in advance.</p>
+            <p>Dear <strong th:text="${patientName}">Patient</strong>,</p>
             
-            <p>Thank you for choosing MediConnect for your healthcare needs.</p>
+            <p>Your appointment with <strong th:text="${doctorName}">Doctor</strong> (<span th:text="${specialization}">Specialization</span>) has been confirmed and is ready.</p>
             
-            <p>Best regards,<br>MediConnect Team</p>
+            <div class="details">
+                <h3>📋 Appointment Details</h3>
+                <div class="detail-row">
+                    <span class="detail-label">👨‍⚕️ Doctor:</span>
+                    <span class="detail-value" th:text="${doctorName}">Doctor Name</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">🏥 Specialization:</span>
+                    <span class="detail-value" th:text="${specialization}">Specialization</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">📅 Date:</span>
+                    <span class="detail-value" th:text="${appointmentDate}">Date</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">⏰ Time:</span>
+                    <span class="detail-value" th:text="${appointmentTime}">Time</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">📍 Type:</span>
+                    <span class="detail-value" th:text="${appointmentType}">Type</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">⏱️ Duration:</span>
+                    <span class="detail-value" th:text="${appointmentDuration + ' minutes'}">Duration</span>
+                </div>
+                <div class="detail-row" th:if="${appointmentNotes}">
+                    <span class="detail-label">📝 Notes:</span>
+                    <span class="detail-value" th:text="${appointmentNotes}">Notes</span>
+                </div>
+            </div>
+            
+            <!-- JITSI MEET Video Consultation Section -->
+            <div class="video-section" th:if="${appointmentType == 'VIDEO_CONSULTATION'}">
+                <h3>💻 Video Consultation via Jitsi Meet 
+                    <span class="platform-badge">JITSI MEET</span>
+                </h3>
+                <p><strong>Your consultation will be conducted using Jitsi Meet - a secure, encrypted video calling platform.</strong></p>
+                
+                <div th:if="${jitsiMeetingLink}">
+                    <p style="font-size: 16px; color: #333; margin: 15px 0;">
+                        <strong>🔗 Join your video consultation:</strong>
+                    </p>
+                    <a th:href="${jitsiMeetingLink}" class="jitsi-link" target="_blank">
+                        🎥 Join Jitsi Meet Call
+                    </a>
+                    <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                        Click the button above or copy this link: <br>
+                        <code th:text="${jitsiMeetingLink}" style="background: #f0f0f0; padding: 5px; border-radius: 3px; font-size: 11px;">Meeting Link</code>
+                    </p>
+                </div>
+                
+                <div class="jitsi-instructions">
+                    <h4>📋 Before joining your Jitsi Meet consultation:</h4>
+                    <ul style="margin: 10px 0; text-align: left;">
+                        <li><strong>Test your setup:</strong> Ensure your camera and microphone work properly</li>
+                        <li><strong>Stable internet:</strong> Use a reliable internet connection for best video quality</li>
+                        <li><strong>Browser compatibility:</strong> Works best with Chrome, Firefox, or Safari</li>
+                        <li><strong>Join early:</strong> You can join the meeting 10 minutes before your appointment</li>
+                        <li><strong>Privacy:</strong> Find a quiet, private space for your consultation</li>
+                        <li><strong>Backup plan:</strong> Have your phone ready in case of technical issues</li>
+                    </ul>
+                </div>
+                
+                <div style="background: #E8F5E8; border: 1px solid #4CAF50; padding: 10px; border-radius: 5px; margin-top: 15px;">
+                    <p style="margin: 0; color: #2E7D32; font-size: 14px;">
+                        ✅ <strong>Why Jitsi Meet?</strong> Jitsi Meet is an open-source, secure video conferencing platform that doesn't require account creation or app downloads. Simply click the link above when it's time for your appointment!
+                    </p>
+                </div>
+            </div>
+            
+            <!-- In-Person Consultation Section -->
+            <div class="details" th:if="${appointmentType == 'IN_PERSON'}">
+                <h3>🏥 Visit Location</h3>
+                <div class="detail-row">
+                    <span class="detail-label">📍 Address:</span>
+                    <span class="detail-value" th:text="${hospitalAddress ?: 'MediConnect Healthcare Center, Tech City, India'}">Address</span>
+                </div>
+                <p style="margin-top: 15px; font-size: 14px; color: #666;">
+                    💡 <strong>Please arrive 15 minutes early</strong> for check-in and registration
+                </p>
+            </div>
+            
+            <div class="important-note">
+                <h4 style="margin-top: 0; color: #856404;">⚠️ Important Reminders:</h4>
+                <ul style="margin: 10px 0;">
+                    <li th:if="${appointmentType == 'VIDEO_CONSULTATION'}">Join your Jitsi Meet call 5-10 minutes before the scheduled time</li>
+                    <li th:if="${appointmentType == 'IN_PERSON'}">Please arrive 10-15 minutes before your appointment time</li>
+                    <li>Bring a valid ID and insurance card (if applicable)</li>
+                    <li>To reschedule or cancel, please do so at least 24 hours in advance</li>
+                    <li>You will receive a reminder notification before your appointment</li>
+                    <li th:if="${appointmentType == 'VIDEO_CONSULTATION'}">Ensure you have a stable internet connection and your camera/microphone are working</li>
+                </ul>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background-color: #f8f9ff; border-radius: 8px;">
+                <h4 style="color: #7C3AED; margin-top: 0;">Need Help?</h4>
+                <p style="margin-bottom: 5px;">📧 Email: support@mediconnect.com</p>
+                <p style="margin-bottom: 5px;">📞 Phone: +91-1800-MEDICONNECT</p>
+                <p style="margin-bottom: 5px;" th:if="${appointmentType == 'VIDEO_CONSULTATION'}">💻 Technical Support: tech@mediconnect.com</p>
+                <p style="margin-bottom: 0;">🌐 Website: www.mediconnect.com</p>
+            </div>
+            
+            <p style="margin-top: 30px;">Thank you for choosing <strong>MediConnect</strong> for your healthcare needs. We're committed to providing you with the best medical care possible.</p>
+            
+            <div th:if="${appointmentType == 'VIDEO_CONSULTATION'}" style="background: #F0F9FF; border: 1px solid #0EA5E9; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                <p style="margin: 0; color: #0C4A6E; font-weight: bold;">
+                    🔒 Your privacy and security are our top priorities. Jitsi Meet provides end-to-end encryption for all video consultations.
+                </p>
+            </div>
+            
+            <p><strong>Best regards,</strong><br>
+            <span style="color: #7C3AED; font-weight: bold;">The MediConnect Team</span></p>
         </div>
+        
         <div class="footer">
-            <p>This email was sent by MediConnect. Please do not reply to this email.</p>
+            <p><strong>© 2025 MediConnect Health. All rights reserved.</strong></p>
+            <p>This email was sent by MediConnect automated system. Please do not reply to this email.</p>
+            <p>If you have any questions, please contact our support team.</p>
         </div>
     </div>
 </body>

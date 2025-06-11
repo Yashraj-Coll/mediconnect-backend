@@ -3,19 +3,21 @@ package com.mediconnect.dto;
 import jakarta.validation.constraints.NotBlank;
 
 public class LoginRequest {
-    
+
     @NotBlank
-    private String email;
+    private String identifier;    // email or phone
 
     @NotBlank
     private String password;
 
-    public String getEmail() {
-        return email;
+    private boolean rememberMe;   // remember-me flag
+
+    public String getIdentifier() {
+        return identifier;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     public String getPassword() {
@@ -24,5 +26,13 @@ public class LoginRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isRememberMe() {
+        return rememberMe;
+    }
+
+    public void setRememberMe(boolean rememberMe) {
+        this.rememberMe = rememberMe;
     }
 }

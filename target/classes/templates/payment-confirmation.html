@@ -2,117 +2,247 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Payment Confirmation</title>
+    <title>Payment Confirmation - MediConnect</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
             color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         .header {
-            background-color: #4CAF50;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
             color: white;
-            padding: 15px;
+            padding: 30px 20px;
             text-align: center;
-            border-radius: 5px 5px 0 0;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        .logo-icon {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            height: 50px;
+            width: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        .logo-text {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .logo-health {
+            color: #FFA500;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 8px;
         }
         .content {
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-top: none;
-            border-radius: 0 0 5px 5px;
+            padding: 30px;
         }
-        .footer {
+        .success-banner {
+            background-color: #E8F5E8;
+            border-left: 4px solid #4CAF50;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 4px;
             text-align: center;
-            margin-top: 20px;
-            color: #777;
-            font-size: 0.8em;
+        }
+        .success-banner h2 {
+            color: #4CAF50;
+            margin: 0 0 10px 0;
+            font-size: 24px;
         }
         .details {
             background-color: #f9f9f9;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        .details h3 {
+            color: #4CAF50;
+            margin-top: 0;
         }
         .details-row {
             display: flex;
             justify-content: space-between;
-            margin: 5px 0;
+            margin: 12px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
         }
         .details-label {
             font-weight: bold;
             color: #555;
         }
-        .success-message {
-            color: #4CAF50;
-            font-weight: bold;
-            font-size: 1.1em;
+        .details-value {
+            color: #333;
+        }
+        .amount-highlight {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 12px;
+            background-color: #f8f8f8;
+        }
+        .next-steps {
+            background-color: #E3F2FD;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .next-steps h4 {
+            color: #2196F3;
+            margin-top: 0;
+        }
+        .pdf-attachment {
+            background-color: #FFF3E0;
+            border: 1px solid #FFB74D;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Payment Confirmation</h1>
-    </div>
-    <div class="content">
-        <p>Dear <span th:text="${patientName}">Patient</span>,</p>
-        
-        <p>Your payment has been successfully processed for your appointment with <span th:text="${doctorName}">Doctor</span>.</p>
-        
-        <p class="success-message">Thank you for your payment!</p>
-        
-        <div class="details">
-            <h3>Payment Details:</h3>
-            <div class="details-row">
-                <span class="details-label">Transaction ID:</span>
-                <span th:text="${transactionId}">TXN_12345</span>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">M<span style="color: #FFA500;">+</span></div>
+                <div>
+                    <span class="logo-text">MediConnect</span>
+                    <span class="logo-health">HEALTH</span>
+                </div>
             </div>
-            <div class="details-row">
-                <span class="details-label">Order ID:</span>
-                <span th:text="${orderId}">ORDER_12345</span>
-            </div>
-            <div class="details-row">
-                <span class="details-label">Amount:</span>
-                <span th:text="${amount + ' ' + currency}">1000 INR</span>
-            </div>
-            <div class="details-row">
-                <span class="details-label">Payment Method:</span>
-                <span th:text="${paymentMethod}">Card</span>
-            </div>
-            <div class="details-row">
-                <span class="details-label">Payment Date:</span>
-                <span th:text="${paymentDate}">2023-04-21 14:30:00</span>
-            </div>
+            <h1 style="margin: 0;">Payment Successful!</h1>
         </div>
         
-        <div class="details">
-            <h3>Appointment Details:</h3>
-            <div class="details-row">
-                <span class="details-label">Doctor:</span>
-                <span th:text="${doctorName}">Dr. John Doe</span>
+        <div class="content">
+            <div class="success-banner">
+                <h2>✅ Payment Confirmed</h2>
+                <p>Your payment has been successfully processed and your appointment is now confirmed.</p>
             </div>
-            <div class="details-row">
-                <span class="details-label">Date:</span>
-                <span th:text="${appointmentDate}">2023-04-22</span>
+            
+            <p>Dear <strong th:text="${patientName}">Patient</strong>,</p>
+            
+            <p>Thank you for your payment! Your appointment with <strong th:text="${doctorName}">Doctor</strong> has been successfully booked and confirmed.</p>
+            
+            <div class="amount-highlight">
+                <h3 style="margin: 0;">💰 Total Amount Paid</h3>
+                <h2 style="margin: 10px 0; font-size: 32px;" th:text="'₹' + ${amount}">₹1000</h2>
+                <p style="margin: 0; opacity: 0.9;">Transaction completed successfully</p>
             </div>
-            <div class="details-row">
-                <span class="details-label">Time:</span>
-                <span th:text="${appointmentTime}">10:30 AM</span>
+            
+            <div class="details">
+                <h3>💳 Payment Details</h3>
+                <div class="details-row">
+                    <span class="details-label">🆔 Transaction ID:</span>
+                    <span class="details-value" th:text="${transactionId}">TXN_12345</span>
+                </div>
+                <div class="details-row">
+                    <span class="details-label">📋 Order ID:</span>
+                    <span class="details-value" th:text="${orderId}">ORDER_12345</span>
+                </div>
+                <div class="details-row">
+                    <span class="details-label">💰 Amount:</span>
+                    <span class="details-value" th:text="'₹' + ${amount}">₹1000</span>
+                </div>
+                <div class="details-row">
+                    <span class="details-label">💳 Payment Method:</span>
+                    <span class="details-value" th:text="${paymentMethod ?: 'Online Payment'}">Card</span>
+                </div>
+                <div class="details-row">
+                    <span class="details-label">📅 Payment Date:</span>
+                    <span class="details-value" th:text="${paymentDate}">2023-04-21 14:30:00</span>
+                </div>
             </div>
+            
+            <div class="details">
+                <h3>👨‍⚕️ Appointment Summary</h3>
+                <div class="details-row">
+                    <span class="details-label">🩺 Doctor:</span>
+                    <span class="details-value" th:text="${doctorName}">Dr. John Doe</span>
+                </div>
+                <div class="details-row">
+                    <span class="details-label">🏥 Specialization:</span>
+                    <span class="details-value" th:text="${specialization ?: 'General Medicine'}">General Medicine</span>
+                </div>
+                <div class="details-row">
+                    <span class="details-label">📅 Date:</span>
+                    <span class="details-value" th:text="${appointmentDate}">2023-04-22</span>
+                </div>
+                <div class="details-row">
+                    <span class="details-label">⏰ Time:</span>
+                    <span class="details-value" th:text="${appointmentTime}">10:30 AM</span>
+                </div>
+                <div class="details-row">
+                    <span class="details-label">📍 Type:</span>
+                    <span class="details-value" th:text="${appointmentType ?: 'In-Person'}">In-Person</span>
+                </div>
+            </div>
+            
+            <div class="pdf-attachment">
+                <h4 style="margin-top: 0; color: #F57C00;">📄 Receipt & Invoice</h4>
+                <p>A detailed PDF receipt has been attached to this email for your records. Please save it for future reference and insurance claims.</p>
+            </div>
+            
+            <div class="next-steps">
+                <h4>📋 What's Next?</h4>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li><strong>Appointment Confirmation:</strong> You'll receive a separate email with detailed appointment information</li>
+                    <li><strong>Reminder:</strong> We'll send you a reminder 24 hours before your appointment</li>
+                    <li><strong>Preparation:</strong> Please arrive 15 minutes early with a valid ID</li>
+                    <li><strong>Documents:</strong> Bring any relevant medical documents or reports</li>
+                </ul>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background-color: #f8f9ff; border-radius: 8px;">
+                <h4 style="color: #7C3AED; margin-top: 0;">Need Help?</h4>
+                <p style="margin-bottom: 5px;">📧 Email: support@mediconnect.com</p>
+                <p style="margin-bottom: 5px;">📞 Phone: +91-1800-MEDICONNECT</p>
+                <p style="margin-bottom: 5px;">🌐 Website: www.mediconnect.com</p>
+                <p style="margin-bottom: 0;">💬 Live Chat: Available 24/7 on our website</p>
+            </div>
+            
+            <p style="margin-top: 30px;">If you need to cancel or reschedule your appointment, please do so at least 24 hours in advance through our website or by contacting our support team.</p>
+            
+            <p><strong>Thank you for choosing MediConnect for your healthcare needs!</strong></p>
+            
+            <p><strong>Best regards,</strong><br>
+            <span style="color: #4CAF50; font-weight: bold;">The MediConnect Team</span></p>
         </div>
         
-        <p>You will receive a separate email with the details of your appointment. Please arrive at least 15 minutes before your scheduled appointment.</p>
-        
-        <p>If you have any questions or need to cancel/reschedule your appointment, please contact us at support@mediconnect.com or call us at +91-1234567890.</p>
-        
-        <p>Best regards,<br/>MediConnect Team</p>
-    </div>
-    <div class="footer">
-        <p>© 2025 MediConnect. All rights reserved.</p>
-        <p>This is an automated email. Please do not reply to this message.</p>
+        <div class="footer">
+            <p><strong>© 2025 MediConnect Health. All rights reserved.</strong></p>
+            <p>This is an automated email confirmation. Please do not reply to this message.</p>
+            <p>For support, please contact us through the channels mentioned above.</p>
+        </div>
     </div>
 </body>
 </html>

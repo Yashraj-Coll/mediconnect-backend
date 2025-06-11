@@ -38,7 +38,7 @@ public class AiDiagnosticService {
     @Autowired
     private AiModelUtil aiModelUtil;
     
-    @Value("${mediconnect.ai.model.version}")
+    @Value("${huggingface.service.version}")
     private String aiModelVersion;
     
     /**

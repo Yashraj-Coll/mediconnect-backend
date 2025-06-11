@@ -136,6 +136,18 @@ public class User {
     @Column(unique = true)
     private String phoneNumber;
     
+    @Column(name = "is_active")
+    private Boolean active = true;
+
+    @Column(name = "email_notifications")
+    private Boolean emailNotifications = true;
+
+    @Column(name = "sms_notifications")
+    private Boolean smsNotifications = true;
+
+    @Column(name = "push_notifications")
+    private Boolean pushNotifications = true;
+    
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", 
               joinColumns = @JoinColumn(name = "user_id"),
@@ -157,5 +169,37 @@ public class User {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+    
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public Boolean getEmailNotifications() {
+        return emailNotifications;
+    }
+
+    public void setEmailNotifications(Boolean emailNotifications) {
+        this.emailNotifications = emailNotifications;
+    }
+
+    public Boolean getSmsNotifications() {
+        return smsNotifications;
+    }
+
+    public void setSmsNotifications(Boolean smsNotifications) {
+        this.smsNotifications = smsNotifications;
+    }
+
+    public Boolean getPushNotifications() {
+        return pushNotifications;
+    }
+
+    public void setPushNotifications(Boolean pushNotifications) {
+        this.pushNotifications = pushNotifications;
     }
 }

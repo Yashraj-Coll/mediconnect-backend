@@ -50,9 +50,13 @@ public class DoctorMapperService {
                 .collect(Collectors.toList());
         dto.setLanguages(languages);
         
-        // Add a default profile image if none exists
-        // In a real app, you would get this from a profile image service
-        dto.setProfileImage("/assets/images/doctors/doctor-" + doctor.getId() + ".jpg");
+        // Set profile image
+        if (doctor.getProfileImage() != null && !doctor.getProfileImage().isEmpty()) {
+            dto.setProfileImage(doctor.getProfileImage());
+        } else {
+            // Fallback to default image if none exists
+            dto.setProfileImage("/assets/images/doctors/doctor-" + doctor.getId() + ".jpg");
+        }
         
         return dto;
     }
@@ -102,8 +106,13 @@ public class DoctorMapperService {
                 .collect(Collectors.toList());
         dto.setLanguages(languages);
         
-        // Add a default profile image if none exists
-        dto.setProfileImage("/assets/images/doctors/doctor-" + doctor.getId() + ".jpg");
+        // Set profile image
+        if (doctor.getProfileImage() != null && !doctor.getProfileImage().isEmpty()) {
+            dto.setProfileImage(doctor.getProfileImage());
+        } else {
+            // Fallback to default image if none exists
+            dto.setProfileImage("/assets/images/doctors/doctor-" + doctor.getId() + ".jpg");
+        }
         
         // Add appointment stats - in a real app, you would get this from an appointment service
         dto.setTotalAppointments(doctor.getAppointments().size());

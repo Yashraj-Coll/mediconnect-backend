@@ -3,6 +3,7 @@ package com.mediconnect.service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -93,7 +94,12 @@ public class ReportService {
     public byte[] generateDoctorAppointmentReport(Long doctorId, LocalDateTime startDate, LocalDateTime endDate) {
         try {
             // Fetch doctor's appointments
-            List<Appointment> appointments = appointmentRepository.findByDoctorIdAndDateRange(doctorId, startDate, endDate);
+        	List<Appointment> appointments = appointmentRepository.findByDoctorIdAndDateRange(
+        		    doctorId, 
+        		    startDate.atOffset(ZoneOffset.ofHoursMinutes(5, 30)),
+        		    endDate.atOffset(ZoneOffset.ofHoursMinutes(5, 30))
+        		);
+
             
             if (appointments.isEmpty()) {
                 throw new ReportGenerationException("No appointments found for the specified period");
@@ -114,14 +120,13 @@ public class ReportService {
             
             // Calculate statistics
             long completedCount = appointments.stream()
-                    .filter(a -> a.getStatus() == Appointment.AppointmentStatus.COMPLETED)
+                    .filter(a -> a.getStatus() == Appointment.AppointmentStatus.completed)
                     .count();
             long cancelledCount = appointments.stream()
-                    .filter(a -> a.getStatus() == Appointment.AppointmentStatus.CANCELLED)
+                    .filter(a -> a.getStatus() == Appointment.AppointmentStatus.cancelled)
                     .count();
-            long noShowCount = appointments.stream()
-                    .filter(a -> a.getStatus() == Appointment.AppointmentStatus.NO_SHOW)
-                    .count();
+            // Note: NO_SHOW doesn't exist in the new enum, so we set this to 0
+            long noShowCount = 0;
             
             variables.put("completedCount", completedCount);
             variables.put("cancelledCount", cancelledCount);

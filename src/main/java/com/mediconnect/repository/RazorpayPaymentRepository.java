@@ -33,4 +33,7 @@ public interface RazorpayPaymentRepository extends JpaRepository<RazorpayPayment
     
     @Query("SELECT p FROM RazorpayPayment p WHERE p.appointment.patient.id = :patientId")
     List<RazorpayPayment> findByPatientId(@Param("patientId") Long patientId);
+    List<RazorpayPayment> findByLabTestBookingIdOrderByCreatedAtDesc(Long labTestBookingId);
+    
+    
 }

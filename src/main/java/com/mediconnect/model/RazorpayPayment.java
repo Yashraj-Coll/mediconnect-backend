@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import com.mediconnect.model.LabTestBooking;
 
 @Entity
 @Table(name = "razorpay_payments")
@@ -24,8 +25,15 @@ public class RazorpayPayment {
     private Long id;
     
     @ManyToOne
-    @JoinColumn(name = "appointment_id", nullable = false)
+    @JoinColumn(name = "appointment_id") // Removed nullable = false to allow lab test payments
     private Appointment appointment;
+    
+    @ManyToOne
+    @JoinColumn(name = "lab_test_booking_id")
+    private LabTestBooking labTestBooking;
+
+    @Column(length = 20)
+    private String bookingType = "APPOINTMENT";
     
     @Column(nullable = false)
     private BigDecimal amount;
@@ -101,6 +109,30 @@ public class RazorpayPayment {
 
     public void setAppointment(Appointment appointment) {
         this.appointment = appointment;
+        // Auto-set booking type when appointment is assigned
+        if (appointment != null) {
+            this.bookingType = "APPOINTMENT";
+        }
+    }
+
+    public LabTestBooking getLabTestBooking() {
+        return labTestBooking;
+    }
+
+    public void setLabTestBooking(LabTestBooking labTestBooking) {
+        this.labTestBooking = labTestBooking;
+        // Auto-set booking type when lab test is assigned
+        if (labTestBooking != null) {
+            this.bookingType = "LAB_TEST";
+        }
+    }
+
+    public String getBookingType() {
+        return bookingType;
+    }
+
+    public void setBookingType(String bookingType) {
+        this.bookingType = bookingType;
     }
 
     public BigDecimal getAmount() {

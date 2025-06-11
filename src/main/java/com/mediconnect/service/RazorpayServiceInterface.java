@@ -10,13 +10,26 @@ import com.mediconnect.model.RazorpayPayment;
 public interface RazorpayServiceInterface {
     
     /**
-     * Create Razorpay order for appointment payment
+     * Create Razorpay order for appointment payment (Simple version)
      * 
      * @param appointmentId Appointment ID
      * @param amount Payment amount
      * @return Order response with details for frontend
      */
     OrderResponse createOrder(Long appointmentId, BigDecimal amount);
+    
+    /**
+     * Create Razorpay order for appointment payment (Full version)
+     * 
+     * @param appointmentId Appointment ID
+     * @param amount Payment amount
+     * @param currency Currency code
+     * @param name Customer name
+     * @param email Customer email
+     * @param contact Customer contact
+     * @return Order response with details for frontend
+     */
+    OrderResponse createOrder(Long appointmentId, BigDecimal amount, String currency, String name, String email, String contact);
     
     /**
      * Verify and process Razorpay payment
@@ -68,4 +81,7 @@ public interface RazorpayServiceInterface {
      * @return List of payments
      */
     List<RazorpayPayment> getPaymentsByDoctorId(Long doctorId);
+    RazorpayPayment getPaymentDetails(String paymentId);
+    OrderResponse createLabTestOrder(Long labTestBookingId, BigDecimal amount, String currency, String name, String email, String contact);
+    List<RazorpayPayment> getPaymentsByLabTestBookingId(Long labTestBookingId);
 }

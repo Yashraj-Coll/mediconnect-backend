@@ -27,8 +27,10 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     @Query("SELECT p FROM Patient p WHERE p.chronicDiseases LIKE %:condition% OR p.allergies LIKE %:condition%")
     List<Patient> findByMedicalCondition(@Param("condition") String condition);
     
-    @Query("SELECT p FROM Patient p JOIN p.appointments a WHERE a.doctor.id = :doctorId")
+    @Query("SELECT DISTINCT p FROM Patient p JOIN FETCH p.user JOIN p.appointments a WHERE a.doctor.id = :doctorId")
     List<Patient> findPatientsByDoctor(@Param("doctorId") Long doctorId);
+	@Query("SELECT p FROM Patient p JOIN FETCH p.user")
+List<Patient> findAllWithUser();
     
     @Query("SELECT p FROM Patient p WHERE p.insuranceProvider = :provider")
     List<Patient> findByInsuranceProvider(@Param("provider") String provider);

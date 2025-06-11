@@ -1,207 +1,294 @@
 package com.mediconnect.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.mediconnect.dto.AppointmentDTO;
-import com.mediconnect.exception.BadRequestException;
-import com.mediconnect.exception.ResourceNotFoundException;
+import com.mediconnect.dto.AppointmentDetailsDTO;
 import com.mediconnect.model.Appointment;
-import com.mediconnect.model.Appointment.AppointmentStatus;
-import com.mediconnect.model.Appointment.AppointmentType;
 import com.mediconnect.model.Doctor;
 import com.mediconnect.model.Patient;
 import com.mediconnect.repository.AppointmentRepository;
 import com.mediconnect.repository.DoctorRepository;
 import com.mediconnect.repository.PatientRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class AppointmentService {
-    
+
+    private static final Logger log = LoggerFactory.getLogger(AppointmentService.class);
+
     @Autowired
     private AppointmentRepository appointmentRepository;
-    
+
     @Autowired
     private DoctorRepository doctorRepository;
-    
+
     @Autowired
     private PatientRepository patientRepository;
-    
+
     @Autowired
     private NotificationService notificationService;
     
-    public List<Appointment> getAllAppointments() {
-        return appointmentRepository.findAll();
+    @Autowired
+    private AppointmentNotificationService appointmentNotificationService;
+
+    public List<AppointmentDTO> getAppointmentsByPatientId(Long patientId) {
+        List<Appointment> appointments = appointmentRepository.findByPatientId(patientId);
+        return appointments.stream().map(AppointmentDTO::new).collect(Collectors.toList());
     }
-    
-    public Appointment getAppointmentById(Long id) {
-        return appointmentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id: " + id));
+
+    public List<AppointmentDTO> getAppointmentsByDoctorId(Long doctorId) {
+        List<Appointment> appointments = appointmentRepository.findByDoctorId(doctorId);
+        return appointments.stream().map(AppointmentDTO::new).collect(Collectors.toList());
     }
-    
-    public List<Appointment> getAppointmentsByDoctorId(Long doctorId) {
-        return appointmentRepository.findByDoctorId(doctorId);
+
+    public AppointmentDTO getAppointmentById(Long id) {
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(id);
+        return appointmentOpt.map(AppointmentDTO::new).orElse(null);
     }
-    
-    public List<Appointment> getAppointmentsByPatientId(Long patientId) {
-        return appointmentRepository.findByPatientId(patientId);
-    }
-    
-    public List<Appointment> getAppointmentsByDoctorAndStatus(Long doctorId, AppointmentStatus status) {
-        return appointmentRepository.findByDoctorIdAndStatus(doctorId, status);
-    }
-    
-    public List<Appointment> getAppointmentsByPatientAndStatus(Long patientId, AppointmentStatus status) {
-        return appointmentRepository.findByPatientIdAndStatus(patientId, status);
-    }
-    
-    public List<Appointment> getDoctorAppointmentsByDateRange(Long doctorId, LocalDateTime startDate, LocalDateTime endDate) {
-        return appointmentRepository.findByDoctorIdAndDateRange(doctorId, startDate, endDate);
-    }
-    
-    public List<Appointment> getPatientAppointmentsByDateRange(Long patientId, LocalDateTime startDate, LocalDateTime endDate) {
-        return appointmentRepository.findByPatientIdAndDateRange(patientId, startDate, endDate);
-    }
-    
-    public List<Appointment> getAppointmentsByType(AppointmentType appointmentType) {
-        return appointmentRepository.findByAppointmentType(appointmentType);
-    }
-    
-    public List<Appointment> getUpcomingAppointmentsByStatus(AppointmentStatus status) {
-        return appointmentRepository.findUpcomingAppointmentsByStatus(status, LocalDateTime.now());
-    }
-    
-    public List<Appointment> getUnpaidAppointments() {
-        return appointmentRepository.findUnpaidAppointments();
-    }
-    
-    @Transactional
-    public Appointment createAppointment(AppointmentDTO appointmentDTO) {
-        // Validate doctor exists
-        Doctor doctor = doctorRepository.findById(appointmentDTO.getDoctorId())
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + appointmentDTO.getDoctorId()));
-        
-        // Validate patient exists
-        Patient patient = patientRepository.findById(appointmentDTO.getPatientId())
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + appointmentDTO.getPatientId()));
-        
-        // Check if appointment time is in the future
-        if (appointmentDTO.getAppointmentDateTime().isBefore(LocalDateTime.now())) {
-            throw new BadRequestException("Appointment time must be in the future");
+
+    public AppointmentDetailsDTO getAppointmentDetailsById(Long id) {
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(id);
+        if (appointmentOpt.isPresent()) {
+            return new AppointmentDetailsDTO(appointmentOpt.get());
+        } else {
+            throw new RuntimeException("Appointment not found with id: " + id);
         }
-        
-        // Check for doctor availability (simplified version - would need more logic in real app)
-        List<Appointment> doctorAppointments = appointmentRepository.findByDoctorIdAndDateRange(
-                doctor.getId(),
-                appointmentDTO.getAppointmentDateTime().minusMinutes(30),
-                appointmentDTO.getAppointmentDateTime().plusMinutes(appointmentDTO.getDurationMinutes() + 30)
-        );
-        
-        if (!doctorAppointments.isEmpty()) {
-            throw new BadRequestException("Doctor is not available at the selected time");
-        }
-        
-        // Create new appointment
+    }
+
+    public AppointmentDTO createAppointment(AppointmentDTO dto) {
         Appointment appointment = new Appointment();
+
+        // Fetch and set Doctor
+        Doctor doctor = doctorRepository.findById(dto.getDoctorId())
+            .orElseThrow(() -> new RuntimeException("Doctor not found"));
         appointment.setDoctor(doctor);
+
+        // Fetch and set Patient
+        Patient patient = patientRepository.findById(dto.getPatientId())
+            .orElseThrow(() -> new RuntimeException("Patient not found"));
         appointment.setPatient(patient);
-        appointment.setAppointmentDateTime(appointmentDTO.getAppointmentDateTime());
-        appointment.setDurationMinutes(appointmentDTO.getDurationMinutes());
-        appointment.setAppointmentType(appointmentDTO.getAppointmentType());
-        appointment.setStatus(AppointmentStatus.SCHEDULED);
-        appointment.setPatientNotes(appointmentDTO.getPatientNotes());
-        appointment.setFee(appointmentDTO.getFee() != null ? appointmentDTO.getFee() : doctor.getConsultationFee());
+
+        // Parse OffsetDateTime from ISO string & convert to IST
+        try {
+            OffsetDateTime utcDateTime = OffsetDateTime.parse(dto.getAppointmentDateTime());
+            OffsetDateTime istDateTime = utcDateTime.atZoneSameInstant(ZoneId.of("Asia/Kolkata")).toOffsetDateTime();
+            appointment.setAppointmentDateTime(istDateTime);
+        } catch (DateTimeParseException e) {
+            throw new RuntimeException("Invalid date time format: " + dto.getAppointmentDateTime(), e);
+        }
+
+        appointment.setAppointmentType(Appointment.AppointmentType.valueOf(dto.getAppointmentType().toLowerCase()));
+        appointment.setDurationMinutes(dto.getDurationMinutes());
+        appointment.setStatus(Appointment.AppointmentStatus.upcoming);
+        appointment.setFee(dto.getFee());
         appointment.setIsPaid(false);
-        
-        // Save appointment
-        Appointment savedAppointment = appointmentRepository.save(appointment);
-        
-        // Send notifications
-        notificationService.sendAppointmentConfirmationToPatient(savedAppointment);
-        notificationService.sendAppointmentAlertToDoctor(savedAppointment);
-        
-        return savedAppointment;
+        appointment.setPatientNotes(dto.getPatientNotes());
+        appointment.setDoctorNotes(dto.getDoctorNotes());
+		
+		if (appointment.getAppointmentType() == Appointment.AppointmentType.video) {
+        String roomName = "mediconnect-doctor-" + doctor.getId() + 
+                         "-patient-" + patient.getId() + "-" + System.currentTimeMillis();
+        appointment.setVideoRoomName(roomName);
+        log.info("Generated video room name for new appointment: {}", roomName);
     }
-    
-    @Transactional
-    public Appointment updateAppointment(Long id, AppointmentDTO appointmentDTO) {
-        Appointment appointment = getAppointmentById(id);
-        
-        // Update appointment fields
-        if (appointmentDTO.getAppointmentDateTime() != null) {
-            // Check if new date is in future
-            if (appointmentDTO.getAppointmentDateTime().isBefore(LocalDateTime.now())) {
-                throw new BadRequestException("Appointment time must be in the future");
-            }
-            appointment.setAppointmentDateTime(appointmentDTO.getAppointmentDateTime());
-        }
-        
-        if (appointmentDTO.getDurationMinutes() != null) {
-            appointment.setDurationMinutes(appointmentDTO.getDurationMinutes());
-        }
-        
-        if (appointmentDTO.getAppointmentType() != null) {
-            appointment.setAppointmentType(appointmentDTO.getAppointmentType());
-        }
-        
-        if (appointmentDTO.getStatus() != null) {
-            appointment.setStatus(appointmentDTO.getStatus());
+
+        Appointment saved = appointmentRepository.save(appointment);
+		
+		 // Update room name with actual appointment ID
+    if (saved.getAppointmentType() == Appointment.AppointmentType.video) {
+        String finalRoomName = "mediconnect-doctor-" + doctor.getId() + 
+                              "-patient-" + patient.getId() + "-" + saved.getId();
+        saved.setVideoRoomName(finalRoomName);
+        saved = appointmentRepository.save(saved);
+        log.info("Updated video room name with appointment ID: {}", finalRoomName);
+    }
+
+ // Only send notification if appointment is paid (direct booking)
+ // For payment flow, notifications are handled by AppointmentNotificationService
+ if (Boolean.TRUE.equals(saved.getIsPaid())) {
+     try {
+         appointmentNotificationService.sendAppointmentConfirmation(saved);
+         notificationService.sendAppointmentAlertToDoctor(saved);
+         log.info("Appointment confirmation notifications sent for paid appointment: {}", saved.getId());
+     } catch (Exception e) {
+         log.error("Failed to send appointment notifications for appointment: {} - Error: {}", saved.getId(), e.getMessage());
+     }
+ } else {
+     log.info("Appointment created but not paid yet - notifications will be sent after payment confirmation");
+ }
+
+        return new AppointmentDTO(saved);
+    }
+
+    public AppointmentDTO updateAppointmentStatus(Long id, String status) {
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(id);
+        if (appointmentOpt.isPresent()) {
+            Appointment appointment = appointmentOpt.get();
             
-            // Send notifications based on status change
-            if (appointmentDTO.getStatus() == AppointmentStatus.CONFIRMED) {
-                notificationService.sendAppointmentConfirmationToPatient(appointment);
-            } else if (appointmentDTO.getStatus() == AppointmentStatus.CANCELLED) {
+            // Store previous status for notification logic
+            Appointment.AppointmentStatus previousStatus = appointment.getStatus();
+            
+            // String to Enum conversion
+            if (status != null) {
+                try {
+                    Appointment.AppointmentStatus newStatus = Appointment.AppointmentStatus.valueOf(status.toLowerCase());
+                    appointment.setStatus(newStatus);
+                    
+                    // TRIGGER NOTIFICATIONS BASED ON STATUS CHANGE
+                    if (newStatus == Appointment.AppointmentStatus.cancelled && 
+                        previousStatus != Appointment.AppointmentStatus.cancelled) {
+                        try {
+                            notificationService.sendAppointmentCancellationToPatient(appointment);
+                            notificationService.sendAppointmentCancellationToDoctor(appointment);
+                            log.info("Cancellation notifications sent for appointment: {}", appointment.getId());
+                        } catch (Exception e) {
+                            log.error("Failed to send cancellation notifications for appointment: {} - Error: {}", 
+                                    appointment.getId(), e.getMessage());
+                        }
+                    }
+                    
+                } catch (IllegalArgumentException e) {
+                    log.warn("Invalid appointment status: {}", status);
+                    // Invalid status, ignore or handle
+                }
+            }
+            
+            Appointment updated = appointmentRepository.save(appointment);
+            return new AppointmentDTO(updated);
+        }
+        return null;
+    }
+
+    public Appointment updateAppointment(Appointment appointment) {
+        return appointmentRepository.save(appointment);
+    }
+
+    public Appointment getAppointmentEntityById(Long id) {
+        return appointmentRepository.findById(id).orElse(null);
+    }
+
+    public void deleteAppointment(Long id) {
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(id);
+        if (appointmentOpt.isPresent()) {
+            Appointment appointment = appointmentOpt.get();
+            
+            // TRIGGER CANCELLATION NOTIFICATIONS BEFORE DELETION
+            try {
                 notificationService.sendAppointmentCancellationToPatient(appointment);
                 notificationService.sendAppointmentCancellationToDoctor(appointment);
+                log.info("Deletion notifications sent for appointment: {}", appointment.getId());
+            } catch (Exception e) {
+                log.error("Failed to send deletion notifications for appointment: {} - Error: {}", 
+                        appointment.getId(), e.getMessage());
             }
         }
         
-        if (appointmentDTO.getPatientNotes() != null) {
-            appointment.setPatientNotes(appointmentDTO.getPatientNotes());
+        appointmentRepository.deleteById(id);
+    }
+
+    public List<AppointmentDTO> getAllAppointments() {
+        List<Appointment> appointments = appointmentRepository.findAll();
+        return appointments.stream().map(AppointmentDTO::new).collect(Collectors.toList());
+    }
+
+    public void sendAppointmentReminders(int hoursBeforeAppointment) {
+        try {
+            // This would typically be called by a scheduled task
+            // Find appointments that are X hours away
+            OffsetDateTime futureTime = OffsetDateTime.now().plusHours(hoursBeforeAppointment);
+            List<Appointment> upcomingAppointments = appointmentRepository.findUpcomingAppointmentsInNextHours(futureTime);
+            
+            for (Appointment appointment : upcomingAppointments) {
+                try {
+                    notificationService.sendAppointmentReminderToPatient(appointment, hoursBeforeAppointment);
+                    notificationService.sendAppointmentReminderToDoctor(appointment, hoursBeforeAppointment);
+                    log.info("Reminder notifications sent for appointment: {} ({} hours before)", 
+                            appointment.getId(), hoursBeforeAppointment);
+                } catch (Exception e) {
+                    log.error("Failed to send reminder notifications for appointment: {} - Error: {}", 
+                            appointment.getId(), e.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error in sendAppointmentReminders process: {}", e.getMessage());
         }
-        
-        if (appointmentDTO.getDoctorNotes() != null) {
-            appointment.setDoctorNotes(appointmentDTO.getDoctorNotes());
+    }
+
+    public void sendPaymentReminders() {
+        try {
+            // Find appointments that are unpaid and scheduled within next 24 hours
+            OffsetDateTime tomorrow = OffsetDateTime.now().plusDays(1);
+            List<Appointment> unpaidAppointments = appointmentRepository.findUnpaidUpcomingAppointments(tomorrow);
+            
+            for (Appointment appointment : unpaidAppointments) {
+                try {
+                    notificationService.sendPaymentReminderToPatient(appointment);
+                    log.info("Payment reminder sent for appointment: {}", appointment.getId());
+                } catch (Exception e) {
+                    log.error("Failed to send payment reminder for appointment: {} - Error: {}", 
+                            appointment.getId(), e.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error in sendPaymentReminders process: {}", e.getMessage());
         }
-        
-        if (appointmentDTO.getFee() != null) {
-            appointment.setFee(appointmentDTO.getFee());
+    }
+
+    public void markAppointmentAsPaid(Long appointmentId) {
+        try {
+            Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
+            if (appointmentOpt.isPresent()) {
+                Appointment appointment = appointmentOpt.get();
+                appointment.setIsPaid(true);
+                appointment.setStatus(Appointment.AppointmentStatus.upcoming);
+                appointmentRepository.save(appointment);
+                log.info("Appointment {} marked as paid and confirmed", appointmentId);
+            }
+        } catch (Exception e) {
+            log.error("Error marking appointment {} as paid: {}", appointmentId, e.getMessage());
         }
-        
-        if (appointmentDTO.getIsPaid() != null) {
-            appointment.setIsPaid(appointmentDTO.getIsPaid());
-        }
-        
-        return appointmentRepository.save(appointment);
+    }
+
+    public List<AppointmentDTO> getAppointmentsByStatus(Appointment.AppointmentStatus status) {
+        List<Appointment> appointments = appointmentRepository.findByStatus(status);
+        return appointments.stream().map(AppointmentDTO::new).collect(Collectors.toList());
+    }
+
+    public List<AppointmentDTO> getTodaysAppointments() {
+        List<Appointment> appointments = appointmentRepository.findTodaysAppointments();
+        return appointments.stream().map(AppointmentDTO::new).collect(Collectors.toList());
+    }
+
+    public List<AppointmentDTO> getAppointmentsByDateRange(OffsetDateTime startDate, OffsetDateTime endDate) {
+        List<Appointment> appointments = appointmentRepository.findByAppointmentDateTimeBetween(startDate, endDate);
+        return appointments.stream().map(AppointmentDTO::new).collect(Collectors.toList());
     }
     
-    @Transactional
-    public Appointment updateAppointmentStatus(Long id, AppointmentStatus status) {
-        Appointment appointment = getAppointmentById(id);
-        appointment.setStatus(status);
-        
-        // Send notifications based on status change
-        if (status == AppointmentStatus.CONFIRMED) {
-            notificationService.sendAppointmentConfirmationToPatient(appointment);
-        } else if (status == AppointmentStatus.CANCELLED) {
-            notificationService.sendAppointmentCancellationToPatient(appointment);
-            notificationService.sendAppointmentCancellationToDoctor(appointment);
+    public AppointmentDTO updateVideoRoomName(Long appointmentId, String videoRoomName) {
+        try {
+            Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
+            if (appointmentOpt.isPresent()) {
+                Appointment appointment = appointmentOpt.get();
+                appointment.setVideoRoomName(videoRoomName);
+                Appointment updated = appointmentRepository.save(appointment);
+                log.info("Video room name updated for appointment: {} - Room: {}", appointmentId, videoRoomName);
+                return new AppointmentDTO(updated);
+            } else {
+                throw new RuntimeException("Appointment not found with id: " + appointmentId);
+            }
+        } catch (Exception e) {
+            log.error("Error updating video room name for appointment {}: {}", appointmentId, e.getMessage());
+            throw new RuntimeException("Failed to update video room name", e);
         }
-        
-        return appointmentRepository.save(appointment);
-    }
-    
-    public void deleteAppointment(Long id) {
-        Appointment appointment = getAppointmentById(id);
-        
-        // Send cancellation notifications before deleting
-        notificationService.sendAppointmentCancellationToPatient(appointment);
-        notificationService.sendAppointmentCancellationToDoctor(appointment);
-        
-        appointmentRepository.delete(appointment);
     }
 }

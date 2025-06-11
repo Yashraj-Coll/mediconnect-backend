@@ -2,6 +2,7 @@ package com.mediconnect.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +84,8 @@ public class AnalyticsService {
         Map<LocalDate, Double> oxygenSaturationData = new HashMap<>();
         
         for (MedicalRecord record : records) {
-            LocalDate recordDate = record.getRecordDate().toLocalDate();
+        	LocalDate recordDate = record.getRecordDate();
+
             
             if (record.getTemperature() != null) {
                 temperatureData.put(recordDate, record.getTemperature());
@@ -123,7 +125,10 @@ public class AnalyticsService {
         LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay();
         
         List<Appointment> appointments = appointmentRepository.findByDoctorIdAndDateRange(
-                doctorId, startDateTime, endDateTime);
+        	    doctorId, 
+        	    startDateTime.atOffset(ZoneOffset.ofHoursMinutes(5, 30)), 
+        	    endDateTime.atOffset(ZoneOffset.ofHoursMinutes(5, 30))
+        	);
         
         DoctorPerformanceDTO performance = new DoctorPerformanceDTO();
         performance.setDoctorId(doctorId);
@@ -133,9 +138,10 @@ public class AnalyticsService {
         Map<Appointment.AppointmentStatus, Long> statusCounts = appointments.stream()
                 .collect(Collectors.groupingBy(Appointment::getStatus, Collectors.counting()));
         
-        performance.setCompletedAppointments(statusCounts.getOrDefault(Appointment.AppointmentStatus.COMPLETED, 0L));
-        performance.setCancelledAppointments(statusCounts.getOrDefault(Appointment.AppointmentStatus.CANCELLED, 0L));
-        performance.setNoShowAppointments(statusCounts.getOrDefault(Appointment.AppointmentStatus.NO_SHOW, 0L));
+        performance.setCompletedAppointments(statusCounts.getOrDefault(Appointment.AppointmentStatus.completed, 0L));
+        performance.setCancelledAppointments(statusCounts.getOrDefault(Appointment.AppointmentStatus.cancelled, 0L));
+        // Note: NO_SHOW doesn't exist in the new enum schema, so we'll skip this metric
+        performance.setNoShowAppointments(0L);
         
         // Calculate appointment type distribution
         Map<Appointment.AppointmentType, Long> typeCounts = appointments.stream()
@@ -163,7 +169,9 @@ public class AnalyticsService {
         LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay();
         
         List<Appointment> appointments = appointmentRepository.findByAppointmentDateTimeBetween(
-                startDateTime, endDateTime);
+        	    startDateTime.atOffset(ZoneOffset.ofHoursMinutes(5, 30)), 
+        	    endDateTime.atOffset(ZoneOffset.ofHoursMinutes(5, 30))
+        	);
         
         ResourceUtilizationDTO utilization = new ResourceUtilizationDTO();
         

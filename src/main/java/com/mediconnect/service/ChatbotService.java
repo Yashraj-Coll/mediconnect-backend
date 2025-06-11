@@ -1,6 +1,7 @@
 package com.mediconnect.service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -304,10 +305,11 @@ public class ChatbotService {
      */
     private List<Map<String, Object>> findAvailableDoctors(LocalDateTime appointmentDateTime, String specialty) {
         // Query for available doctors
-        List<Object[]> availableDoctors = appointmentRepository.findAvailableDoctors(
-                appointmentDateTime, 
-                appointmentDateTime.plusMinutes(30),
-                specialty);
+    	List<Object[]> availableDoctors = appointmentRepository.findAvailableDoctors(
+    		    appointmentDateTime.atOffset(ZoneOffset.ofHoursMinutes(5, 30)),
+    		    appointmentDateTime.plusMinutes(30).atOffset(ZoneOffset.ofHoursMinutes(5, 30)),
+    		    specialty
+    		);
         
         List<Map<String, Object>> result = new ArrayList<>();
         

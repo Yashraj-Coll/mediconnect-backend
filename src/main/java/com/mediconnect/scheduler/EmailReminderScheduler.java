@@ -1,6 +1,7 @@
 package com.mediconnect.scheduler;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -35,7 +36,11 @@ public class EmailReminderScheduler {
         LocalDateTime start = LocalDateTime.now();
         LocalDateTime end = start.plusHours(24);
         
-        List<Appointment> upcomingAppointments = appointmentRepository.findByAppointmentDateTimeBetween(start, end);
+        List<Appointment> upcomingAppointments = appointmentRepository.findByAppointmentDateTimeBetween(
+        	    start.atOffset(ZoneOffset.ofHoursMinutes(5, 30)),
+        	    end.atOffset(ZoneOffset.ofHoursMinutes(5, 30))
+        	);
+
         
         log.info("Found {} upcoming appointments for reminder", upcomingAppointments.size());
         

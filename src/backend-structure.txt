@@ -1,0 +1,279 @@
+Folder PATH listing for volume New Volume
+Volume serial number is D057-8F59
+E:.
+¦   backend-structure.txt
+¦   
++---main
+    +---java
+    ¦   +---com
+    ¦       +---mediconnect
+    ¦           ¦   MediConnectApplication.java
+    ¦           ¦   
+    ¦           +---blockchain
+    ¦           ¦       MedicalRecordContract.java
+    ¦           ¦       
+    ¦           +---config
+    ¦           ¦       AiModelProperties.java
+    ¦           ¦       AiServiceConfig.java
+    ¦           ¦       AppConfig.java
+    ¦           ¦       GoogleMeetConfig.java
+    ¦           ¦       JwtProperties.java
+    ¦           ¦       RazorpayConfig.java
+    ¦           ¦       RestTemplateConfig.java
+    ¦           ¦       SecurityConfig.java
+    ¦           ¦       ThymeleafConfig.java
+    ¦           ¦       WebConfig.java
+    ¦           ¦       WebSocketConfig.java
+    ¦           ¦       
+    ¦           +---controller
+    ¦           ¦       AdvancedSearchController.java
+    ¦           ¦       AiDiagnosisController.java
+    ¦           ¦       AppointmentController.java
+    ¦           ¦       AuthController.java
+    ¦           ¦       ChatbotController.java
+    ¦           ¦       DiagnosisController.java
+    ¦           ¦       DoctorController.java
+    ¦           ¦       GenomicDataController.java
+    ¦           ¦       GoogleMeetController.java
+    ¦           ¦       HealthPredictorController.java
+    ¦           ¦       ImageAnalysisController.java
+    ¦           ¦       MedicalCodingController.java
+    ¦           ¦       MedicalDocumentController.java
+    ¦           ¦       MedicalImageController.java
+    ¦           ¦       MedicalRecordController.java
+    ¦           ¦       MedicationInteractionController.java
+    ¦           ¦       PatientController.java
+    ¦           ¦       PaymentController.java
+    ¦           ¦       PrescriptionController.java
+    ¦           ¦       RazorpayController.java
+    ¦           ¦       ReportController.java
+    ¦           ¦       SpeechToTextController.java
+    ¦           ¦       TranslationController.java
+    ¦           ¦       TreatmentRecommendationController.java
+    ¦           ¦       TriageController.java
+    ¦           ¦       VideoConsultationController.java
+    ¦           ¦       VitalSignsController.java
+    ¦           ¦       VoiceTranscriptionController.java
+    ¦           ¦       
+    ¦           +---dto
+    ¦           ¦   ¦   AiDiagnosisRequestDTO.java
+    ¦           ¦   ¦   ApiResponse.java
+    ¦           ¦   ¦   AppointmentDetailsDTO.java
+    ¦           ¦   ¦   AppointmentDTO.java
+    ¦           ¦   ¦   AppointmentSearchDTO.java
+    ¦           ¦   ¦   BlockchainRecordDTO.java
+    ¦           ¦   ¦   ChatbotMessageDTO.java
+    ¦           ¦   ¦   ChatbotResponseDTO.java
+    ¦           ¦   ¦   CompleteDocotrResponseDTO.java
+    ¦           ¦   ¦   DeviceReadingDTO.java
+    ¦           ¦   ¦   DoctorDTO.java
+    ¦           ¦   ¦   DoctorLanguageDTO.java
+    ¦           ¦   ¦   DoctorSearchDTO.java
+    ¦           ¦   ¦   GenomicAnalysisDTO.java
+    ¦           ¦   ¦   GoogleMeetDTO.java
+    ¦           ¦   ¦   HealthRiskAssessmentDTO.java
+    ¦           ¦   ¦   InteractionWarningDTO.java
+    ¦           ¦   ¦   LoginRequest.java
+    ¦           ¦   ¦   MedicalDocumentDTO.java
+    ¦           ¦   ¦   MedicalRecordDTO.java
+    ¦           ¦   ¦   MedicationRecommendationDTO.java
+    ¦           ¦   ¦   PatientDTO.java
+    ¦           ¦   ¦   PatientSearchDTO.java
+    ¦           ¦   ¦   PaymentIntentDTO.java
+    ¦           ¦   ¦   PrescriptionDTO.java
+    ¦           ¦   ¦   PrescriptionItemDTO.java
+    ¦           ¦   ¦   RazorpayDTO.java
+    ¦           ¦   ¦   SignupRequest.java
+    ¦           ¦   ¦   TokenResponse.java
+    ¦           ¦   ¦   TranslationRequestDTO.java
+    ¦           ¦   ¦   TranslationResponseDTO.java
+    ¦           ¦   ¦   TreatmentOptionDTO.java
+    ¦           ¦   ¦   TreatmentRecommendationDTO.java
+    ¦           ¦   ¦   TriageRequestDTO.java
+    ¦           ¦   ¦   TriageResultDTO.java
+    ¦           ¦   ¦   UserDTO.java
+    ¦           ¦   ¦   VideoSessionMessageDTO.java
+    ¦           ¦   ¦   VitalSignDTO.java
+    ¦           ¦   ¦   VoiceTranscriptionDTO.java
+    ¦           ¦   ¦   
+    ¦           ¦   +---analytics
+    ¦           ¦   ¦       DoctorPerformanceDTO.java
+    ¦           ¦   ¦       PatientTrendsDTO.java
+    ¦           ¦   ¦       ResourceUtilizationDTO.java
+    ¦           ¦   ¦       
+    ¦           ¦   +---request
+    ¦           ¦           MedicalRequest.java
+    ¦           ¦           
+    ¦           +---exception
+    ¦           ¦       BadRequestException.java
+    ¦           ¦       BlockchainException.java
+    ¦           ¦       ChatbotException.java
+    ¦           ¦       FileNotFoundException.java
+    ¦           ¦       FileStorageException.java
+    ¦           ¦       GenomicAnalysisException.java
+    ¦           ¦       GlobalExceptionHandler.java
+    ¦           ¦       HealthPredictionException.java
+    ¦           ¦       ImageAnalysisException.java
+    ¦           ¦       MedicationInteractionException.java
+    ¦           ¦       MonitoringException.java
+    ¦           ¦       PaymentProcessingException.java
+    ¦           ¦       ReportGenerationException.java
+    ¦           ¦       ResourceNotFoundException.java
+    ¦           ¦       TranscriptionException.java
+    ¦           ¦       TranslationException.java
+    ¦           ¦       TreatmentRecommendationException.java
+    ¦           ¦       TriageException.java
+    ¦           ¦       
+    ¦           +---model
+    ¦           ¦       AiDiagnosisResult.java
+    ¦           ¦       AlertRule.java
+    ¦           ¦       Appointment.java
+    ¦           ¦       ChatSession.java
+    ¦           ¦       DeviceReading.java
+    ¦           ¦       DiagnosisPrediction.java
+    ¦           ¦       Doctor.java
+    ¦           ¦       DoctorAvailability.java
+    ¦           ¦       DoctorLanguage.java
+    ¦           ¦       ERole.java
+    ¦           ¦       Gender.java
+    ¦           ¦       GenomicData.java
+    ¦           ¦       GenomicRiskFactor.java
+    ¦           ¦       HealthRiskAssessment.java
+    ¦           ¦       ImageAnalysisResult.java
+    ¦           ¦       MedicalDocument.java
+    ¦           ¦       MedicalRecord.java
+    ¦           ¦       MedicalRecordBlockchain.java
+    ¦           ¦       MonitoringDevice.java
+    ¦           ¦       Patient.java
+    ¦           ¦       Payment.java
+    ¦           ¦       Prescription.java
+    ¦           ¦       PrescriptionItem.java
+    ¦           ¦       RazorpayPayment.java
+    ¦           ¦       Role.java
+    ¦           ¦       Session.java
+    ¦           ¦       TreatmentRecommendation.java
+    ¦           ¦       TriageRecord.java
+    ¦           ¦       User.java
+    ¦           ¦       VideoSession.java
+    ¦           ¦       VitalSign.java
+    ¦           ¦       
+    ¦           +---repository
+    ¦           ¦       AiDiagnosisResultRepository.java
+    ¦           ¦       AlertRuleRepository.java
+    ¦           ¦       AppointmentRepository.java
+    ¦           ¦       ChatSessionRepository.java
+    ¦           ¦       DeviceReadingRepository.java
+    ¦           ¦       DiagnosisPredictionRepository.java
+    ¦           ¦       DoctorAvailabilityRepository.java
+    ¦           ¦       DoctorLanguageRepository.java
+    ¦           ¦       DoctorRepository.java
+    ¦           ¦       GenomicDataRepository.java
+    ¦           ¦       GenomicRiskFactorRepository.java
+    ¦           ¦       HealthRiskAssessmentRepository.java
+    ¦           ¦       ImageAnalysisResultRepository.java
+    ¦           ¦       MedicalDocumentRepository.java
+    ¦           ¦       MedicalRecordBlockchainRepository.java
+    ¦           ¦       MedicalRecordRepository.java
+    ¦           ¦       MonitoringDeviceRepository.java
+    ¦           ¦       PatientRepository.java
+    ¦           ¦       PaymentRepository.java
+    ¦           ¦       PrescriptionItemRepository.java
+    ¦           ¦       PrescriptionRepository.java
+    ¦           ¦       RazorpayPaymentRepository.java
+    ¦           ¦       RoleRepository.java
+    ¦           ¦       SessionRepository.java
+    ¦           ¦       TreatmentRecommendationRepository.java
+    ¦           ¦       TriageRecordRepository.java
+    ¦           ¦       UserRepository.java
+    ¦           ¦       VideoSessionRepository.java
+    ¦           ¦       VitalSignRepository.java
+    ¦           ¦       
+    ¦           +---scheduler
+    ¦           ¦       EmailReminderScheduler.java
+    ¦           ¦       
+    ¦           +---security
+    ¦           ¦       JwtAuthenticationEntryPoint.java
+    ¦           ¦       JwtAuthenticationFilter.java
+    ¦           ¦       SecurityService.java
+    ¦           ¦       UserDetailsImpl.java
+    ¦           ¦       UserDetailsServiceImpl.java
+    ¦           ¦       WebSocketAuthenticationInterceptor.java
+    ¦           ¦       
+    ¦           +---service
+    ¦           ¦   ¦   AdvancedSearchService.java
+    ¦           ¦   ¦   AiDiagnosticService.java
+    ¦           ¦   ¦   AnalyticsService.java
+    ¦           ¦   ¦   AppointmentNotificationService.java
+    ¦           ¦   ¦   AppointmentService.java
+    ¦           ¦   ¦   BlockchainMedicalRecordService.java
+    ¦           ¦   ¦   ChatbotService.java
+    ¦           ¦   ¦   DiagnosisPredictionService.java
+    ¦           ¦   ¦   DoctorMapperService.java
+    ¦           ¦   ¦   DoctorService.java
+    ¦           ¦   ¦   EmailService.java
+    ¦           ¦   ¦   FileStorageService.java
+    ¦           ¦   ¦   GenomicDataService.java
+    ¦           ¦   ¦   GoogleMeetService.java
+    ¦           ¦   ¦   HealthPredictorService.java
+    ¦           ¦   ¦   MedicalDocumentService.java
+    ¦           ¦   ¦   MedicalImageAnalysisService.java
+    ¦           ¦   ¦   MedicalRecordService.java
+    ¦           ¦   ¦   MedicationInteractionService.java
+    ¦           ¦   ¦   NotificationService.java
+    ¦           ¦   ¦   PatientService.java
+    ¦           ¦   ¦   PaymentService.java
+    ¦           ¦   ¦   PdfGenerationService.java
+    ¦           ¦   ¦   PrescriptionService.java
+    ¦           ¦   ¦   RazorpayService.java
+    ¦           ¦   ¦   RazorpayServiceInterface.java
+    ¦           ¦   ¦   ReminderService.java
+    ¦           ¦   ¦   RemoteMonitoringService.java
+    ¦           ¦   ¦   ReportService.java
+    ¦           ¦   ¦   TranslationService.java
+    ¦           ¦   ¦   TreatmentRecommendationService.java
+    ¦           ¦   ¦   TriageService.java
+    ¦           ¦   ¦   UserService.java
+    ¦           ¦   ¦   VideoService.java
+    ¦           ¦   ¦   VitalSignService.java
+    ¦           ¦   ¦   VoiceTranscriptionService.java
+    ¦           ¦   ¦   
+    ¦           ¦   +---ai
+    ¦           ¦   ¦       AiModelService.java
+    ¦           ¦   ¦       GenomicDataAiService.java
+    ¦           ¦   ¦       HealthPredictorAiService.java
+    ¦           ¦   ¦       MedicalCodingService.java
+    ¦           ¦   ¦       MedicationInteractionAiService.java
+    ¦           ¦   ¦       OpenAIChatbotService.java
+    ¦           ¦   ¦       OpenAiService.java
+    ¦           ¦   ¦       SpeechToTextService.java
+    ¦           ¦   ¦       TranslationAiService.java
+    ¦           ¦   ¦       TreatmentRecommendationAiService.java
+    ¦           ¦   ¦       TriageServiceAi.java
+    ¦           ¦   ¦       
+    ¦           ¦   +---impl
+    ¦           +---util
+    ¦                   AiModelUtil.java
+    ¦                   AudioUtils.java
+    ¦                   JwtUtil.java
+    ¦                   
+    +---resources
+    ¦   ¦   application.properties
+    ¦   ¦   mediconnect-api-2ad32b3e69f8.json
+    ¦   ¦   
+    ¦   +---com
+    ¦   ¦   +---mediconnect
+    ¦   ¦       +---util
+    ¦   +---META-INF
+    ¦   ¦       spring-configuration-metadata.json
+    ¦   ¦       
+    ¦   +---templates
+    ¦           appointment-confirmation.html
+    ¦           payment-confirmation.html
+    ¦           prescription-report.html
+    ¦           
+    +---webapp
+        ¦   index.jsp
+        ¦   
+        +---WEB-INF
+                web.xml
+                

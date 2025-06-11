@@ -14,14 +14,15 @@ import com.mediconnect.repository.UserRepository;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
-
+    public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
+        User user = userRepository.findByEmailOrPhoneNumber(identifier, identifier)
+            .orElseThrow(() -> new UsernameNotFoundException(
+                "User not found with identifier: " + identifier
+            ));
         return UserDetailsImpl.build(user);
     }
 }

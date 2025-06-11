@@ -8,8 +8,9 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.mediconnect.dto.GoogleMeetDTO;
 import com.mediconnect.exception.BadRequestException;
 import com.mediconnect.exception.ResourceNotFoundException;
 import com.mediconnect.model.Appointment;
@@ -23,6 +24,8 @@ import com.mediconnect.repository.VideoSessionRepository;
 @Service
 public class VideoService {
     
+    private static final Logger log = LoggerFactory.getLogger(VideoService.class);
+    
     @Autowired
     private VideoSessionRepository videoSessionRepository;
     
@@ -32,8 +35,7 @@ public class VideoService {
     @Autowired
     private NotificationService notificationService;
     
-    @Autowired
-    private GoogleMeetService googleMeetService;
+    // REMOVED: GoogleMeetService - Now using Jitsi Meet
     
     public List<VideoSession> getAllVideoSessions() {
         return videoSessionRepository.findAll();
@@ -85,7 +87,7 @@ public class VideoService {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id: " + appointmentId));
         
-        if (appointment.getAppointmentType() != AppointmentType.VIDEO_CALL) {
+        if (appointment.getAppointmentType() != AppointmentType.video) {
             throw new BadRequestException("Cannot create video session for non-video appointment");
         }
         
@@ -101,37 +103,38 @@ public class VideoService {
         videoSession.setDoctorToken(generateToken("doctor", appointment.getId()));
         videoSession.setPatientToken(generateToken("patient", appointment.getId()));
         videoSession.setStatus(SessionStatus.SCHEDULED);
-        videoSession.setScheduledStartTime(appointment.getAppointmentDateTime());
+        videoSession.setScheduledStartTime(appointment.getAppointmentDateTime().toLocalDateTime());
         videoSession.setRecordingEnabled(recordingEnabled);
         
-        // Update appointment status to CONFIRMED if it's not already
-        if (appointment.getStatus() != AppointmentStatus.CONFIRMED) {
-            appointment.setStatus(AppointmentStatus.CONFIRMED);
+        // Generate Jitsi room name and save to appointment
+        String jitsiRoomName = generateJitsiRoomName(appointment);
+        appointment.setVideoRoomName(jitsiRoomName);
+        appointmentRepository.save(appointment);
+        
+        // Add Jitsi room info to session notes
+        videoSession.setSessionNotes("Jitsi Meet Room: " + jitsiRoomName + 
+                                    "\nFrontend Link: http://localhost:3000/video-consultation/" + appointment.getId());
+        
+        // Update appointment status to upcoming if it's not already
+        if (appointment.getStatus() != AppointmentStatus.upcoming) {
+            appointment.setStatus(AppointmentStatus.upcoming);
             appointmentRepository.save(appointment);
         }
         
         // Save the video session
         VideoSession savedSession = videoSessionRepository.save(videoSession);
         
-        // Create Google Meet meeting
+        // Send notifications with Jitsi Meet link (NO MORE GOOGLE MEET)
         try {
-            GoogleMeetDTO meetDTO = googleMeetService.createMeeting(savedSession);
-            System.out.println("Created Google Meet meeting: " + meetDTO.getMeetLink() + " for session: " + meetDTO.getSessionId());
-            // Meeting link is already saved in the session notes by the GoogleMeetService
-            
-            // Send notifications with Google Meet link
+            log.info("Sending Jitsi Meet video session notifications for appointment: {}", appointment.getId());
             notificationService.sendVideoSessionDetailsToDoctor(savedSession);
             notificationService.sendVideoSessionDetailsToPatient(savedSession);
+            log.info("Jitsi Meet video session notifications sent successfully");
         } catch (Exception e) {
-            // If Google Meet creation fails, still continue with the normal flow
-            // but log the error and note it in the session
-            e.printStackTrace();
-            savedSession.setSessionNotes("Failed to create Google Meet link: " + e.getMessage());
+            log.error("Failed to send video session notifications: {}", e.getMessage(), e);
+            savedSession.setSessionNotes(savedSession.getSessionNotes() + 
+                                       "\nNotification Error: " + e.getMessage());
             videoSessionRepository.save(savedSession);
-            
-            // Send normal notifications
-            notificationService.sendVideoSessionDetailsToDoctor(savedSession);
-            notificationService.sendVideoSessionDetailsToPatient(savedSession);
         }
         
         return savedSession;
@@ -174,7 +177,7 @@ public class VideoService {
         
         // Update appointment status
         Appointment appointment = session.getAppointment();
-        appointment.setStatus(AppointmentStatus.COMPLETED);
+        appointment.setStatus(AppointmentStatus.completed);
         appointmentRepository.save(appointment);
         
         return videoSessionRepository.save(session);
@@ -215,29 +218,18 @@ public class VideoService {
             throw new BadRequestException("Cannot cancel a completed or already cancelled session");
         }
         
-        // Extract Google Meet event ID if it exists
-        String sessionNotes = session.getSessionNotes();
-        if (sessionNotes != null && sessionNotes.contains("Google Meet Link: https://meet.google.com/")) {
-            try {
-                // This is a simplified way to extract the event ID
-                // In a real app, you might store it more formally
-                // Here we're assuming the event ID is stored somewhere in the notes or can be derived
-                // For now, we'll just log that we would delete the meeting
-                System.out.println("Would delete Google Meet for session: " + session.getSessionId());
-                // If you have the event ID stored, you would call:
-                // googleMeetService.deleteMeeting(eventId);
-            } catch (Exception e) {
-                // Log error but continue with cancellation
-                e.printStackTrace();
-            }
-        }
+        // NO MORE GOOGLE MEET DELETION - Just log the cancellation
+        log.info("Cancelling Jitsi Meet video session: {}", session.getSessionId());
         
         session.setStatus(SessionStatus.CANCELLED);
-        session.setSessionNotes((sessionNotes != null ? sessionNotes + "\n" : "") + "Cancellation reason: " + reason);
+        String sessionNotes = session.getSessionNotes();
+        session.setSessionNotes((sessionNotes != null ? sessionNotes + "\n" : "") + 
+                               "Cancellation reason: " + reason + 
+                               "\nCancelled at: " + LocalDateTime.now());
         
         // Update appointment status
         Appointment appointment = session.getAppointment();
-        appointment.setStatus(AppointmentStatus.CANCELLED);
+        appointment.setStatus(AppointmentStatus.cancelled);
         appointmentRepository.save(appointment);
         
         // Send notifications
@@ -255,5 +247,15 @@ public class VideoService {
     private String generateToken(String role, Long appointmentId) {
         // In a real application, this would generate a secure token for video service authentication
         return role + "-" + UUID.randomUUID().toString() + "-" + appointmentId;
+    }
+    
+    /**
+     * Generate Jitsi room name for appointment
+     */
+    private String generateJitsiRoomName(Appointment appointment) {
+        return String.format("mediconnect-doctor-%d-patient-%d-%d", 
+                appointment.getDoctor().getId(), 
+                appointment.getPatient().getId(), 
+                appointment.getId());
     }
 }

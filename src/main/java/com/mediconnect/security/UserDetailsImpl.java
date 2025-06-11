@@ -24,15 +24,23 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     
     private Collection<? extends GrantedAuthority> authorities;
+    
+    private User user;
 
-    public UserDetailsImpl(Long id, String email, String firstName, String lastName, String password,
-                          Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(Long id,
+                           String email,
+                           String firstName,
+                           String lastName,
+                           String password,
+                           Collection<? extends GrantedAuthority> authorities,
+                           User user) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
         this.authorities = authorities;
+        this.user = user;
     }
 
     public static UserDetailsImpl build(User user) {
@@ -46,14 +54,20 @@ public class UserDetailsImpl implements UserDetails {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getPassword(),
-                authorities);
+                authorities,
+                user
+        );
+    }
+
+    public User getUser() {
+        return this.user;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
     }
-    
+
     public Long getId() {
         return id;
     }
@@ -61,11 +75,11 @@ public class UserDetailsImpl implements UserDetails {
     public String getEmail() {
         return email;
     }
-    
+
     public String getFirstName() {
         return firstName;
     }
-    
+
     public String getLastName() {
         return lastName;
     }
@@ -106,7 +120,7 @@ public class UserDetailsImpl implements UserDetails {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        UserDetailsImpl user = (UserDetailsImpl) o;
-        return Objects.equals(id, user.id);
+        UserDetailsImpl that = (UserDetailsImpl) o;
+        return Objects.equals(id, that.id);
     }
 }
